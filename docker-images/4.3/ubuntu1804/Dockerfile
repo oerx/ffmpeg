@@ -102,7 +102,7 @@ RUN \
         DIR=/tmp/svt-av1 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
-        curl -sL https://github.com/AOMediaCodec/SVT-AV1/archive/${SVTAV1_VERSION}.tar.gz | \
+        curl -sL https://github.com/AOMediaCodec/SVT-AV1/archive/v${SVTAV1_VERSION}.tar.gz | \
         tar -zx --strip-components=1 && \
         cd Build && \
         cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release && \
