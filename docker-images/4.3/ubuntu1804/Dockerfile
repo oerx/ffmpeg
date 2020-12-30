@@ -48,6 +48,7 @@ ENV         FFMPEG_VERSION=4.3.1 \
             LIBZMQ_VERSION=4.3.2 \
             LIBSRT_VERSION=1.4.1 \
             LIBARIBB24_VERSION=1.0.3 \
+            SVTAV1_VERSION=0.8.5 \
             LIBPNG_VERSION=1.6.9 \
             SRC=/usr/local
 
@@ -95,6 +96,20 @@ RUN      buildDeps="autoconf \
                     zlib1g-dev" && \
         apt-get -yqq update && \
         apt-get install -yq --no-install-recommends ${buildDeps}
+   
+## svt-av1 https://sourceforge.net/projects/opencore-amr/
+RUN \
+        DIR=/tmp/svt-av1 && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sL https://github.com/AOMediaCodec/SVT-AV1/archive/${SVTAV1_VERSION}.zip | \
+        tar -zx --strip-components=1 && \
+        cd Build && \
+        cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release && \
+        make -j $(nproc) && \
+        sudo make install && \
+        rm -rf ${DIR}
+        
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN \
         DIR=/tmp/opencore-amr && \
