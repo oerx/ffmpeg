@@ -48,6 +48,7 @@ ENV         FFMPEG_VERSION=4.3.1 \
             LIBZMQ_VERSION=4.3.2 \
             LIBSRT_VERSION=1.4.1 \
             LIBARIBB24_VERSION=1.0.3 \
+            VMAF_VERSION=1.5.2 \
             LIBPNG_VERSION=1.6.9 \
             SRC=/usr/local
 
@@ -92,9 +93,32 @@ RUN      buildDeps="autoconf \
                     libssh-dev \
                     libssl-dev \
                     yasm \
-                    zlib1g-dev" && \
+                    zlib1g-dev \
+                    python3 \
+                    python3-dev \
+                    python3-pip \
+                    python3-setuptools \
+                    python3-wheel \
+                    ninja-build" && \
         apt-get -yqq update && \
         apt-get install -yq --no-install-recommends ${buildDeps}
+        
+## Need the latest version of these so we can compile Netflix vmaf.
+RUN      pip3 install meson
+RUN      pip3 install Cython
+RUN      pip3 install numpy
+        
+## libvmaf https://github.com/Netflix/vmaf
+RUN \
+        DIR=/tmp/vmaf && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sL https://github.com/Netflix/vmaf/archive/v${VMAF_VERSION}.tar.gz | \
+        tar -zx --strip-components=1 && \
+        make -j && \
+        make install && \
+        rm -rf ${DIR}
+        
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN \
         DIR=/tmp/opencore-amr && \
@@ -515,6 +539,7 @@ RUN \
         --enable-libwebp \
         --enable-libxcb \
         --enable-libx265 \
+        --enable-libvmaf \
         --enable-libxvid \
         --enable-libx264 \
         --enable-nonfree \
@@ -550,7 +575,7 @@ RUN \
         for lib in /usr/local/lib/*.so.*; do ln -s "${lib##*/}" "${lib%%.so.*}".so; done && \
         cp ${PREFIX}/bin/* /usr/local/bin/ && \
         cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
-        LD_LIBRARY_PATH=/usr/local/lib ffmpeg -buildconf && \
+        LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/x86_64-linux-gnu ffmpeg -buildconf && \
         cp -r ${PREFIX}/include/libav* ${PREFIX}/include/libpostproc ${PREFIX}/include/libsw* /usr/local/include && \
         mkdir -p /usr/local/lib/pkgconfig && \
         for pc in ${PREFIX}/lib/pkgconfig/libav*.pc ${PREFIX}/lib/pkgconfig/libpostproc.pc ${PREFIX}/lib/pkgconfig/libsw*.pc; do \
@@ -560,7 +585,7 @@ RUN \
 FROM        base AS release
 MAINTAINER  Julien Rottenberg <julien@rottenberg.info>
 
-ENV         LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+ENV         LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:/usr/local/lib/x86_64-linux-gnu
 
 CMD         ["--help"]
 ENTRYPOINT  ["ffmpeg"]
