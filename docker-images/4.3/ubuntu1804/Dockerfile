@@ -117,7 +117,7 @@ RUN \
         tar -zx --strip-components=1 && \
         make -j && \
         make install && \
-        cp ./model /usr/local/share/model
+        cp ./model /usr/local/share/model \
         rm -rf ${DIR}
         
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
