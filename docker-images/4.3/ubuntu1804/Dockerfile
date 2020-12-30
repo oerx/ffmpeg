@@ -107,7 +107,7 @@ RUN \
         cd Build && \
         cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release && \
         make -j $(nproc) && \
-        sudo make install && \
+        make install && \
         rm -rf ${DIR}
         
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
@@ -530,6 +530,7 @@ RUN \
         --enable-libwebp \
         --enable-libxcb \
         --enable-libx265 \
+        --enable-libsvtav1 \
         --enable-libxvid \
         --enable-libx264 \
         --enable-nonfree \
