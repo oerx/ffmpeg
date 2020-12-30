@@ -501,11 +501,9 @@ RUN \
 
 ## ffmpeg https://ffmpeg.org/
 RUN  \
-        DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
-        curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
-        tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2
-
-
+        DIR=/tmp && mkdir -p ${DIR} && cd ${DIR} && \
+        git clone --depth=1 https://github.com/FFmpeg/FFmpeg ffmpeg && \
+        cd ffmpeg
 
 RUN \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
