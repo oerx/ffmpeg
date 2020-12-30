@@ -48,7 +48,7 @@ ENV         FFMPEG_VERSION=4.3.1 \
             LIBZMQ_VERSION=4.3.2 \
             LIBSRT_VERSION=1.4.1 \
             LIBARIBB24_VERSION=1.0.3 \
-            VMAF_VERSION=1.5.2 \
+            VMAF_VERSION=2.0.0 \
             LIBPNG_VERSION=1.6.9 \
             SRC=/usr/local
 
